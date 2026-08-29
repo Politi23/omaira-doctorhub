@@ -191,9 +191,9 @@ export default function Dashboard() {
           {tasaHoy && (
             <button onClick={() => navigate('/tasa')}
                     className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-2xl"
-                    style={{background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.14)'}}>
-              <TrendingUp size={11} className="text-blue-300" />
-              <span className="text-blue-300 text-xs font-semibold">BCV €</span>
+                    style={{background:'rgba(244,114,182,0.14)', border:'1px solid rgba(244,114,182,0.30)'}}>
+              <TrendingUp size={11} className="text-pink-300" />
+              <span className="text-pink-300 text-xs font-semibold">BCV €</span>
               <span className="text-white text-xs font-bold">{parseFloat(tasaHoy.toFixed(4))} Bs</span>
             </button>
           )}
@@ -245,29 +245,29 @@ export default function Dashboard() {
         {/* Stats — 2x2 */}
         <div className="grid grid-cols-2 gap-3">
           <div className="glass-card flex flex-col items-center gap-1 py-5">
-            <div className="w-10 h-10 rounded-2xl bg-white/15 flex items-center justify-center mb-1">
-              <Users size={19} className="text-white" />
+            <div className="w-10 h-10 rounded-2xl flex items-center justify-center mb-1" style={{background:'rgba(244,114,182,0.16)', border:'1px solid rgba(244,114,182,0.28)'}}>
+              <Users size={19} className="text-pink-200" />
             </div>
             <p className="text-2xl font-bold text-white">{pacientes.length}</p>
             <p className="text-xs text-white/50">{TERM.P}</p>
           </div>
           <div className="glass-card flex flex-col items-center gap-1 py-5">
-            <div className="w-10 h-10 rounded-2xl bg-white/15 flex items-center justify-center mb-1">
-              <Clock size={19} className="text-white" />
+            <div className="w-10 h-10 rounded-2xl flex items-center justify-center mb-1" style={{background:'rgba(59,130,246,0.16)', border:'1px solid rgba(59,130,246,0.28)'}}>
+              <Clock size={19} className="text-blue-200" />
             </div>
             <p className="text-2xl font-bold text-white">{citasHoy.length}</p>
             <p className="text-xs text-white/50">Citas hoy</p>
           </div>
           <div className="glass-card flex flex-col items-center gap-1 py-5">
-            <div className="w-10 h-10 rounded-2xl bg-white/15 flex items-center justify-center mb-1">
-              <UserPlus size={19} className="text-white" />
+            <div className="w-10 h-10 rounded-2xl flex items-center justify-center mb-1" style={{background:'rgba(244,114,182,0.16)', border:'1px solid rgba(244,114,182,0.28)'}}>
+              <UserPlus size={19} className="text-pink-200" />
             </div>
             <p className="text-2xl font-bold text-white">{pacientesNuevasMes}</p>
             <p className="text-xs text-white/50">{TERM.Nueva}s {MESES[mes].slice(0,3)}</p>
           </div>
           <div className="glass-card flex flex-col items-center gap-1 py-5">
-            <div className="w-10 h-10 rounded-2xl bg-white/15 flex items-center justify-center mb-1">
-              <CalendarDays size={19} className="text-white" />
+            <div className="w-10 h-10 rounded-2xl flex items-center justify-center mb-1" style={{background:'rgba(59,130,246,0.16)', border:'1px solid rgba(59,130,246,0.28)'}}>
+              <CalendarDays size={19} className="text-blue-200" />
             </div>
             <p className="text-2xl font-bold text-white">{citasMesActual}</p>
             <p className="text-xs text-white/50">Citas {MESES[mes].slice(0,3)}</p>
@@ -431,7 +431,7 @@ export default function Dashboard() {
                     <p className="text-[9px] text-blue-300 font-bold leading-none uppercase">
                       {MESES[new Date(c.fecha+'T12:00').getMonth()].slice(0,3)}
                     </p>
-                    <p className="text-base font-bold text-blue-200 leading-tight">
+                    <p className="text-base font-bold text-pink-200 leading-tight">
                       {new Date(c.fecha+'T12:00').getDate()}
                     </p>
                   </div>

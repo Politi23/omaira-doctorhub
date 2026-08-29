@@ -22,7 +22,7 @@ input, select, textarea, button {
 /* ── Fondo animado ─────────────────────────────────────────────────────────── */
 
 .bg-mesh {
-  background: linear-gradient(135deg, #050b1f 0%, #0a1330 40%, #0d1b4b 100%);
+  background: linear-gradient(135deg, #050b22 0%, #0e1240 45%, #0d1b4b 100%);
 }
 
 .orb {
@@ -43,31 +43,33 @@ input, select, textarea, button {
 }
 
 .orb-2 {
-  width: 350px;
-  height: 350px;
-  background: radial-gradient(circle, #ec4899, #be185d);
-  top: 40%;
-  right: -100px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #ec4899, #9d174d);
+  top: 32%;
+  right: -150px;
+  opacity: 0.38;
   animation-duration: 22s;
   animation-delay: -7s;
 }
 
 .orb-3 {
-  width: 300px;
-  height: 300px;
+  width: 380px;
+  height: 380px;
   background: radial-gradient(circle, #3b82f6, #1d4ed8);
-  bottom: 80px;
-  left: 20%;
+  bottom: 60px;
+  left: 10%;
   animation-duration: 25s;
   animation-delay: -13s;
 }
 
 .orb-4 {
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, #3b82f6, #2563eb);
-  top: 55%;
-  left: -60px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, #f472b6, #9d174d);
+  top: 68%;
+  left: -110px;
+  opacity: 0.34;
   animation-duration: 20s;
   animation-delay: -4s;
 }
