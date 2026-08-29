@@ -74,8 +74,8 @@ export default function Pacientes() {
             onClick={() => navigate(`/pacientes/${p.id}`)}
             className="w-full glass-card flex items-center gap-3 active:bg-white/15 transition-colors text-left"
           >
-            <div className="w-11 h-11 rounded-full bg-white/15 flex items-center justify-center flex-shrink-0"
-                 style={{boxShadow:'inset 0 1px 0 rgba(255,255,255,0.30)'}}>
+            <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
+                 style={{background:'rgba(244,114,182,0.22)', border:'1px solid rgba(244,114,182,0.35)'}}>
               <span className="text-white font-bold text-sm">{(p.nombre||' ')[0]}{(p.apellido||' ')[0]}</span>
             </div>
             <div className="flex-1 min-w-0">

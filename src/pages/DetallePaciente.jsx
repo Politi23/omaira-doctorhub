@@ -105,8 +105,8 @@ export default function DetallePaciente() {
 
         {/* Perfil */}
         <div className="glass-card flex flex-col items-center gap-3 py-6">
-          <div className="w-20 h-20 rounded-full bg-white/15 flex items-center justify-center"
-               style={{boxShadow:'inset 0 1px 0 rgba(255,255,255,0.40)'}}>
+          <div className="w-20 h-20 rounded-full flex items-center justify-center"
+               style={{background:'rgba(244,114,182,0.22)', border:'1px solid rgba(244,114,182,0.35)'}}>
             <span className="text-white text-2xl font-bold">
               {(paciente.nombre||' ')[0]}{(paciente.apellido||' ')[0]}
             </span>
@@ -140,13 +140,13 @@ export default function DetallePaciente() {
         {/* Próxima cita */}
         {proximaCita ? (
           <div className="glass-card flex items-center gap-3"
-               style={{background:'rgba(59, 130, 246,0.12)', border:'1px solid rgba(59, 130, 246,0.30)'}}>
+               style={{background:'rgba(244,114,182,0.12)', border:'1px solid rgba(244,114,182,0.30)'}}>
             <div className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0"
-                 style={{background:'rgba(59, 130, 246,0.20)', border:'1px solid rgba(59, 130, 246,0.35)'}}>
-              <Calendar size={19} className="text-blue-300" />
+                 style={{background:'rgba(244,114,182,0.20)', border:'1px solid rgba(244,114,182,0.35)'}}>
+              <Calendar size={19} className="text-pink-300" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-blue-200 text-xs font-semibold mb-0.5">Próxima cita</p>
+              <p className="text-pink-200 text-xs font-semibold mb-0.5">Próxima cita</p>
               <p className="text-white font-semibold truncate">{proximaCita.motivo}</p>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-white/55 text-xs">{formatFecha(proximaCita.fecha)}</span>

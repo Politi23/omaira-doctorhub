@@ -157,8 +157,8 @@ export default function Citas() {
         </button>
         <div className="flex flex-col items-end gap-2 flex-shrink-0">
           <div className="flex items-center gap-1">
-            <Clock size={13} className="text-blue-300" />
-            <span className="text-blue-300 text-sm font-semibold">{formatHora(c.hora)}</span>
+            <Clock size={13} className="text-pink-300" />
+            <span className="text-pink-300 text-sm font-semibold">{formatHora(c.hora)}</span>
           </div>
           <EstadoBadge cita={c} onCambiar={e => cambiarEstado(c, e)} />
           <div className="flex items-center gap-3">
@@ -242,9 +242,9 @@ export default function Citas() {
               <div className="flex items-center justify-between px-1">
                 <h2 className="text-white/65 text-sm font-semibold capitalize">
                   {labelDia}
-                  {citasDelDia.length > 0 && <span className="text-blue-300 ml-1">· {citasDelDia.length}</span>}
+                  {citasDelDia.length > 0 && <span className="text-pink-300 ml-1">· {citasDelDia.length}</span>}
                 </h2>
-                <button onClick={() => navigate(`/citas/nueva?fecha=${diaSeleccionado}`)} className="text-blue-300 text-xs font-medium">
+                <button onClick={() => navigate(`/citas/nueva?fecha=${diaSeleccionado}`)} className="text-pink-300 text-xs font-medium">
                   + Agendar
                 </button>
               </div>
@@ -265,10 +265,10 @@ export default function Citas() {
                   <div key={c.id} className="glass-card flex items-center gap-3">
                     <div className="rounded-2xl px-3 py-2 text-center flex-shrink-0"
                          style={{background:'rgba(96, 165, 250,0.15)', border:'1px solid rgba(96, 165, 250,0.25)', minWidth:'46px'}}>
-                      <p className="text-[10px] text-blue-300 font-bold leading-none">
+                      <p className="text-[10px] text-pink-300 font-bold leading-none">
                         {MESES[new Date(c.fecha+'T12:00').getMonth()].slice(0,3).toUpperCase()}
                       </p>
-                      <p className="text-lg font-bold text-blue-200 leading-tight">
+                      <p className="text-lg font-bold text-pink-200 leading-tight">
                         {new Date(c.fecha+'T12:00').getDate()}
                       </p>
                     </div>
@@ -353,7 +353,7 @@ export default function Citas() {
               </div>
               <button onClick={() => abrirReagendar(cobrarCita)}
                       className="w-full py-3 rounded-2xl text-white font-semibold text-sm flex items-center justify-center gap-2"
-                      style={{background:'rgba(59, 130, 246,0.25)', border:'1px solid rgba(59, 130, 246,0.40)'}}>
+                      style={{background:'rgba(244,114,182,0.28)', border:'1px solid rgba(244,114,182,0.45)'}}>
                 <CalendarPlus size={15} />
                 Reagendar próxima cita
               </button>
@@ -368,7 +368,7 @@ export default function Citas() {
           <div className="glass-strong w-full max-w-sm rounded-3xl p-6 space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0"
-                   style={{background:'rgba(59, 130, 246,0.20)', border:'1px solid rgba(59, 130, 246,0.30)'}}>
+                   style={{background:'rgba(244,114,182,0.20)', border:'1px solid rgba(244,114,182,0.32)'}}>
                 <CalendarPlus size={20} className="text-blue-400" />
               </div>
               <div>

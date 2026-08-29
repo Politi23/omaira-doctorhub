@@ -181,8 +181,8 @@ export default function NuevaCita() {
                   <button key={m} type="button" onClick={() => toggleMotivo(m)}
                           className="px-3 py-1.5 rounded-2xl text-xs font-semibold transition-all"
                           style={{
-                            background: activo ? 'rgba(59, 130, 246,0.45)' : 'rgba(255,255,255,0.08)',
-                            border: `1px solid ${activo ? 'rgba(59, 130, 246,0.70)' : 'rgba(255,255,255,0.15)'}`,
+                            background: activo ? 'rgba(244,114,182,0.45)' : 'rgba(255,255,255,0.08)',
+                            border: `1px solid ${activo ? 'rgba(244,114,182,0.70)' : 'rgba(255,255,255,0.15)'}`,
                             color: activo ? 'white' : 'rgba(255,255,255,0.50)',
                           }}>
                     {m}
