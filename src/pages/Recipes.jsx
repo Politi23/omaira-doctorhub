@@ -54,27 +54,16 @@ function imprimirRecipe(recipe, paciente) {
       <p class="sede">${sede ? `${sede.nombre}${sede.direccion ? ', ' + sede.direccion : ''}` : ''}</p>
     </div>`
 
-  // Hoja 1 — RP. (solo los medicamentos, para la farmacia)
-  const hojaRp = `
+  // Una sola hoja: cada medicamento con su indicación debajo, sin repetir
+  const hoja = `
     <section class="hoja">
       ${encabezado}
       <p class="titulo">RP.</p>
       <ol class="meds">
-        ${meds.map(m => `<li><b>${m.nombre}</b></li>`).join('')}
-      </ol>
-      ${pie}
-    </section>`
-
-  // Hoja 2 — Ind. (medicamentos con sus indicaciones y las generales)
-  const hojaInd = `
-    <section class="hoja">
-      ${encabezado}
-      <p class="titulo">Ind.</p>
-      <ol class="meds">
         ${meds.map(m => `
           <li>
             <b>${m.nombre}</b>
-            ${m.indicaciones ? `<p class="ind">Indicaciones: ${m.indicaciones}</p>` : ''}
+            ${m.indicaciones ? `<p class="ind">${m.indicaciones}</p>` : ''}
           </li>`).join('')}
       </ol>
       ${generales.length ? `
@@ -88,8 +77,7 @@ function imprimirRecipe(recipe, paciente) {
   <style>
     @page { margin: 14mm 15mm; }
     body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: #111; margin: 0; }
-    .hoja { page-break-after: always; min-height: 96vh; display: flex; flex-direction: column; }
-    .hoja:last-child { page-break-after: auto; }
+    .hoja { min-height: 96vh; display: flex; flex-direction: column; }
     .cab { text-align: center; }
     h1 { font-size: 14pt; margin: 0; color: #1d4ed8; }
     .esp { margin: 2px 0 0; font-size: 10pt; color: #2563eb; font-weight: bold; }
@@ -101,7 +89,7 @@ function imprimirRecipe(recipe, paciente) {
       background: #eff6ff; border-left: 3px solid #2563eb; padding: 5px 10px;
     }
     ol.meds { margin: 0; padding-left: 20px; }
-    ol.meds li { margin-bottom: 9px; font-size: 10.5pt; }
+    ol.meds li { margin-bottom: 10px; font-size: 10.5pt; }
     .ind { margin: 2px 0 0; font-size: 9pt; font-style: italic; color: #333; }
     .generales-tit { font-size: 10pt; font-weight: bold; margin: 18px 0 6px; }
     .generales p { margin: 0 0 3px; font-size: 9.5pt; }
@@ -110,8 +98,7 @@ function imprimirRecipe(recipe, paciente) {
     .sede { margin: 2px 0 0; font-size: 8.5pt; color: #444; }
     @media print { body { margin: 0; } }
   </style></head><body>
-  ${hojaRp}
-  ${hojaInd}
+  ${hoja}
   <script>window.onload=()=>window.print()<\/script></body></html>`
 
   const w = window.open('', '_blank')
