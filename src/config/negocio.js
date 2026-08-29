@@ -59,16 +59,7 @@ export const NEGOCIO = {
     { nombre: 'Clínica Venezuela',        direccion: 'Puerto Cabello' },
   ],
 
-  // ── Indicaciones generales que se repiten (se pueden insertar con un toque) ──
-  indicacionesFrecuentes: [
-    'Limitar el consumo de sodio al día (1.500 mg de sodio al día)',
-    'Dieta rica en frutas, verduras, proteínas y granos integrales; evitar dietas extremas',
-    'Actividad física intensa 150 minutos a la semana',
-    'Reducir el tiempo sentado',
-    'Control de peso: meta bajar 5-10% del peso corporal basal durante los primeros 6 meses',
-    'Higiene del sueño: dormir entre 7 y 9 horas',
-    'Control de estrés y ansiedad',
-  ],
+
 }
 
 // ── Terminología: cómo se llama a las personas atendidas ──

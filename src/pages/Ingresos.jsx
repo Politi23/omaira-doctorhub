@@ -129,6 +129,7 @@ export default function Ingresos() {
   const [verResumen, setVerResumen] = useState(false)
   const [verMetodos, setVerMetodos] = useState(false)
   const [verDias,    setVerDias]    = useState(false)
+  const [verSedes,   setVerSedes]   = useState(false)
 
   const irAnterior = () => { setVistaTotal('mes'); if (mes === 0) { setMes(11); setAnio(a => a-1) } else setMes(m => m-1) }
   const irSiguiente = () => { setVistaTotal('mes'); if (mes === 11) { setMes(0); setAnio(a => a+1) } else setMes(m => m+1) }
@@ -168,6 +169,19 @@ export default function Ingresos() {
     ingresosPeriodo.forEach(i => {
       const key = i.metodo_pago || 'Sin método'
       if (!map[key]) map[key] = { count: 0, totalUsd: 0, esUsd: METODOS_USD.includes(i.metodo_pago) }
+      map[key].count++
+      const t = Number(i.tasa_bcv)
+      map[key].totalUsd += i.moneda === 'USD' ? Number(i.monto) : (t ? Number(i.monto) / t : 0)
+    })
+    return Object.entries(map).sort((a, b) => b[1].totalUsd - a[1].totalUsd)
+  })()
+
+  // Resumen por sede: cuánto se generó en cada sitio donde atiende
+  const resumenSedes = (() => {
+    const map = {}
+    ingresosPeriodo.forEach(i => {
+      const key = i.sede || 'Sin sede'
+      if (!map[key]) map[key] = { count: 0, totalUsd: 0 }
       map[key].count++
       const t = Number(i.tasa_bcv)
       map[key].totalUsd += i.moneda === 'USD' ? Number(i.monto) : (t ? Number(i.monto) / t : 0)
@@ -299,6 +313,35 @@ export default function Ingresos() {
             </div>
           </div>
         </div>
+
+        {/* Ingresos por sede */}
+        {ingresosPeriodo.length > 0 && resumenSedes.length > 0 && (
+          <div className="glass-card space-y-3">
+            <button onClick={() => setVerSedes(v => !v)} className="w-full flex items-center justify-between">
+              <span className="text-white font-semibold text-sm">Por sede · {periodoLabel}</span>
+              {verSedes ? <ChevronUp size={16} className="text-white/40" /> : <ChevronDown size={16} className="text-white/40" />}
+            </button>
+            <div className="space-y-2">
+              {(verSedes ? resumenSedes : resumenSedes.slice(0, 3)).map(([sede, { count, totalUsd }]) => {
+                const pct = resumenSedes[0][1].totalUsd > 0 ? (totalUsd / resumenSedes[0][1].totalUsd) * 100 : 0
+                return (
+                  <div key={sede} className="space-y-1">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white/85 text-sm truncate">{sede}</p>
+                        <p className="text-white/35 text-xs">{count} {count === 1 ? 'pago' : 'pagos'}</p>
+                      </div>
+                      <span className="text-emerald-300 text-sm font-bold flex-shrink-0">${totalUsd.toFixed(2)}</span>
+                    </div>
+                    <div className="h-1.5 rounded-full overflow-hidden" style={{background:'rgba(255,255,255,0.07)'}}>
+                      <div className="h-full rounded-full" style={{width: `${pct}%`, background:'rgba(236,72,153,0.75)'}} />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Ingresos por día */}
         {ingresosPeriodo.length > 0 && (
@@ -445,7 +488,10 @@ export default function Ingresos() {
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-semibold truncate">{i.paciente_nombre}</p>
                   <p className="text-white/55 text-sm truncate">{i.concepto}</p>
-                  <p className="text-white/30 text-xs">{formatFecha(i.fecha)} · {i.metodo_pago}</p>
+                  <p className="text-white/30 text-xs">
+                    {formatFecha(i.fecha)} · {i.metodo_pago}
+                    {i.sede && <span className="text-pink-300/60"> · {i.sede}</span>}
+                  </p>
                   {i.moneda === 'Bs' && (() => { const t = Number(i.tasa_bcv); return t ? <p className="text-blue-300/50 text-xs">Tasa EUR: {parseFloat(t.toFixed(4))} · ≈€{(Number(i.monto)/t).toFixed(2)}</p> : null })()}
                   {i.notas ? <p className="text-white/40 text-xs truncate">{i.notas}</p> : null}
                 </div>

@@ -9,6 +9,7 @@ import { hoyVE } from '../lib/fecha'
 import { NEGOCIO, TERM } from '../config/negocio'
 
 const CONCEPTOS = NEGOCIO.conceptosIngreso
+const SEDES     = NEGOCIO.sedes || []
 const METODOS   = ['Efectivo USD','Efectivo Bs','Transferencia bancaria','Zelle','PayPal','Pago Móvil','Binance / Cripto','Otro']
 
 const METODOS_BS  = ['Efectivo Bs', 'Transferencia bancaria', 'Pago Móvil']
@@ -31,7 +32,8 @@ export default function NuevoIngreso() {
     fecha: hoyVE(),
     conceptos: [], concepto_custom: '',
     monto: '', moneda: 'USD',
-    metodo_pago: 'Efectivo USD', notas: ''
+    metodo_pago: 'Efectivo USD', notas: '',
+    sede: SEDES[0]?.nombre || ''
   })
   const [busqueda, setBusqueda] = useState('')
   const [mostrarBuscador, setMostrarBuscador] = useState(!pacienteParam && !esEdicion)
@@ -61,7 +63,8 @@ export default function NuevoIngreso() {
         monto: String(ingresoExistente.monto),
         moneda: ingresoExistente.moneda,
         metodo_pago: ingresoExistente.metodo_pago,
-        notas: ingresoExistente.notas || ''
+        notas: ingresoExistente.notas || '',
+        sede: ingresoExistente.sede || SEDES[0]?.nombre || ''
       })
       if (ingresoExistente.moneda !== 'Bs' && METODOS_BS.includes(ingresoExistente.metodo_pago) && ingresoExistente.tasa_bcv) {
         const montoBsGuardado = (Number(ingresoExistente.monto) * ingresoExistente.tasa_bcv).toFixed(2)
@@ -191,6 +194,7 @@ export default function NuevoIngreso() {
     const base = {
       paciente_id: form.paciente_id, paciente_nombre: form.paciente_nombre,
       fecha: form.fecha, concepto, notas: form.notas.trim(),
+      sede: form.sede || null,
     }
 
     setGuardando(true)
@@ -298,6 +302,15 @@ export default function NuevoIngreso() {
               <input className="glass-input mt-2" placeholder="Especifica el concepto..." value={form.concepto_custom} onChange={e => set('concepto_custom', e.target.value)} maxLength={120} />
             )}
           </div>
+
+          {SEDES.length > 0 && (
+            <div>
+              <label className="glass-label">Sede <span className="text-white/35 font-normal">(dónde se atendió)</span></label>
+              <select className="glass-input" value={form.sede} onChange={e => set('sede', e.target.value)}>
+                {SEDES.map(x => <option key={x.nombre} value={x.nombre}>{x.nombre}</option>)}
+              </select>
+            </div>
+          )}
 
           {/* Método de pago 1 */}
           <div>

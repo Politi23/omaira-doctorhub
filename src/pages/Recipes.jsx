@@ -163,13 +163,6 @@ export default function Recipes() {
     medicamentos: prev.medicamentos.length > 1 ? prev.medicamentos.filter((_, k) => k !== i) : prev.medicamentos,
   }))
 
-  const insertarIndicacion = (texto) => {
-    setForm(prev => {
-      const actuales = prev.indicaciones_generales.split('\n').filter(l => l.trim())
-      if (actuales.includes(texto)) return prev
-      return { ...prev, indicaciones_generales: [...actuales, texto].join('\n') }
-    })
-  }
 
   const abrirNuevo = () => {
     setForm({
@@ -291,15 +284,6 @@ export default function Recipes() {
                         placeholder="Una indicación por línea..."
                         value={form.indicaciones_generales}
                         onChange={e => set('indicaciones_generales', e.target.value)} />
-              <div className="flex flex-wrap gap-2 mt-2">
-                {NEGOCIO.indicacionesFrecuentes.map(t => (
-                  <button key={t} type="button" onClick={() => insertarIndicacion(t)}
-                          className="px-2.5 py-1 rounded-xl text-xs text-left"
-                          style={{ background: 'rgba(236,72,153,0.14)', border: '1px solid rgba(236,72,153,0.30)', color: '#f9a8d4' }}>
-                    + {t.length > 42 ? t.slice(0, 42) + '…' : t}
-                  </button>
-                ))}
-              </div>
             </div>
 
             <button onClick={guardar} disabled={guardando} className="glass-btn-primary" style={guardando ? { opacity: 0.6 } : {}}>

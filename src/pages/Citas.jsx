@@ -149,7 +149,9 @@ export default function Citas() {
              style={{background: pasada ? 'rgba(255,255,255,0.18)' : 'rgba(96, 165, 250,0.80)'}} />
         <button className="flex-1 min-w-0 text-left" onClick={() => navigate(`/pacientes/${c.paciente_id}`)}>
           <p className="text-white font-semibold truncate">{c.paciente_nombre}</p>
-          <p className="text-white/50 text-sm truncate">{c.motivo}</p>
+          <p className="text-white/50 text-sm truncate">
+            {c.motivo}{c.sede ? <span className="text-pink-300/60"> · {c.sede}</span> : null}
+          </p>
           {mostrarFecha && <p className="text-white/30 text-xs">{c.fecha ? c.fecha.split('-').reverse().join('/') : ''}</p>}
           {c.notas && <p className="text-white/30 text-xs italic truncate">{c.notas}</p>}
         </button>
@@ -272,7 +274,9 @@ export default function Citas() {
                     </div>
                     <button className="flex-1 min-w-0 text-left" onClick={() => navigate(`/pacientes/${c.paciente_id}`)}>
                       <p className="text-white font-semibold truncate">{c.paciente_nombre}</p>
-                      <p className="text-white/50 text-sm truncate">{c.motivo}</p>
+                      <p className="text-white/50 text-sm truncate">
+            {c.motivo}{c.sede ? <span className="text-pink-300/60"> · {c.sede}</span> : null}
+          </p>
                     </button>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className="text-white/45 text-sm">{formatHora(c.hora)}</span>

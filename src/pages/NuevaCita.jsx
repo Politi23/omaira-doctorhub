@@ -8,6 +8,7 @@ import { hoyVE } from '../lib/fecha'
 import { NEGOCIO, TERM } from '../config/negocio'
 
 const MOTIVOS = NEGOCIO.motivosCita
+const SEDES   = NEGOCIO.sedes || []
 
 export default function NuevaCita() {
   const navigate = useNavigate()
@@ -21,7 +22,7 @@ export default function NuevaCita() {
   const citaExistente = esEdicion ? citas.find(c => c.id === editId) : null
   const toast = useToast()
 
-  const [form, setForm] = useState({ paciente_id:'', paciente_nombre:'', fecha: fechaParam, hora:'', motivos:[], motivo_custom:'', notas:'' })
+  const [form, setForm] = useState({ paciente_id:'', paciente_nombre:'', fecha: fechaParam, hora:'', motivos:[], motivo_custom:'', notas:'', sede: SEDES[0]?.nombre || '' })
   const [busqueda, setBusqueda] = useState('')
   const [mostrarBuscador, setMostrarBuscador] = useState(!pacienteParam && !esEdicion)
   const [errores, setErrores] = useState({})
@@ -40,7 +41,8 @@ export default function NuevaCita() {
         hora: citaExistente.hora || '',
         motivos: enLista.length ? (custom ? [...enLista, 'Otro'] : enLista) : ['Otro'],
         motivo_custom: custom,
-        notas: citaExistente.notas || ''
+        notas: citaExistente.notas || '',
+        sede: citaExistente.sede || SEDES[0]?.nombre || ''
       })
       setMostrarBuscador(false)
     }
@@ -79,7 +81,7 @@ export default function NuevaCita() {
       ? form.motivos.map(m => m === 'Otro' ? (form.motivo_custom.trim() || 'Otro') : m)
       : ['Sin especificar']
     const motivo = partes.join(' + ')
-    const datos = { paciente_id: form.paciente_id, paciente_nombre: form.paciente_nombre, fecha: form.fecha, hora: form.hora, motivo, notas: form.notas.trim() }
+    const datos = { paciente_id: form.paciente_id, paciente_nombre: form.paciente_nombre, fecha: form.fecha, hora: form.hora, motivo, notas: form.notas.trim(), sede: form.sede || null }
     setGuardando(true)
     try {
       if (esEdicion) {
@@ -160,6 +162,15 @@ export default function NuevaCita() {
               {errores.hora && <p className="text-red-400 text-xs mt-1">{errores.hora}</p>}
             </div>
           </div>
+
+          {SEDES.length > 0 && (
+            <div>
+              <label className="glass-label">Sede <span className="text-white/35 font-normal">(dónde la atenderá)</span></label>
+              <select className="glass-input" value={form.sede} onChange={e => set('sede', e.target.value)}>
+                {SEDES.map(x => <option key={x.nombre} value={x.nombre}>{x.nombre}</option>)}
+              </select>
+            </div>
+          )}
 
           <div>
             <label className="glass-label">Motivo <span className="text-white/35 font-normal">(puedes elegir varios)</span></label>
