@@ -59,17 +59,21 @@ function imprimirRecipe(recipe, paciente) {
       <p class="sede">${sede ? `${sede.nombre}${sede.direccion ? ', ' + sede.direccion : ''}` : ''}</p>
     </div>`
 
-  // Una sola hoja con las dos secciones: RP. (para la farmacia)
-  // e Ind. (las indicaciones para el paciente).
-  const hoja = `
-    <section class="hoja">
+  // Una sola hoja horizontal partida en dos mitades:
+  // izquierda RP. (para la farmacia) y derecha Ind. (para el paciente).
+  const mitadRp = `
+    <div class="mitad">
       ${encabezado}
-
       <p class="titulo">RP.</p>
-      <ol class="meds rp">
+      <ol class="meds">
         ${meds.map(m => `<li><b>${m.nombre}</b></li>`).join('')}
       </ol>
+      ${pie}
+    </div>`
 
+  const mitadInd = `
+    <div class="mitad">
+      ${encabezado}
       <p class="titulo">Ind.</p>
       <ol class="meds">
         ${meds.map(m => `
@@ -78,45 +82,51 @@ function imprimirRecipe(recipe, paciente) {
             ${m.indicaciones ? `<p class="ind">Indicaciones: ${m.indicaciones}</p>` : ''}
           </li>`).join('')}
       </ol>
-
       ${generales.length ? `
         <p class="generales-tit">INDICACIONES GENERALES:</p>
         <div class="generales">${generales.map(l => `<p>${l}</p>`).join('')}</div>` : ''}
-
       ${pie}
-    </section>`
+    </div>`
 
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
   <title>Récipe — ${recipe.paciente_nombre}</title>
   <style>
-    @page { margin: 12mm 15mm; }
-    body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #111; margin: 0; }
-    .hoja { min-height: 96vh; display: flex; flex-direction: column; }
-    .cab { display: flex; align-items: center; gap: 12px; }
-    .cab .logo { width: 46px; height: 46px; flex-shrink: 0; }
-    .cab .equilibrio { width: 46px; flex-shrink: 0; }
-    .doc { flex: 1; text-align: center; }
-    h1 { font-size: 13.5pt; margin: 0; color: #1d4ed8; }
-    .esp { margin: 2px 0 0; font-size: 9.5pt; color: #2563eb; font-weight: bold; }
-    .cred { margin: 2px 0 0; font-size: 8pt; color: #444; }
-    .regla { border-top: 2px solid #2563eb; margin: 8px 0; }
-    .datos { font-size: 8.5pt; margin: 0 0 12px; }
-    .titulo {
-      font-size: 10.5pt; font-weight: bold; color: #2563eb; margin: 0 0 8px;
-      background: #eff6ff; border-left: 3px solid #2563eb; padding: 4px 10px;
+    @page { size: A4 landscape; margin: 10mm; }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, Helvetica, sans-serif; color: #111; margin: 0; }
+    .hoja { display: flex; gap: 14mm; height: 178mm; }
+    .mitad {
+      flex: 1; min-width: 0; display: flex; flex-direction: column;
+      padding-right: 7mm;
     }
-    ol.meds { margin: 0 0 14px; padding-left: 20px; }
-    ol.meds li { margin-bottom: 7px; font-size: 10pt; }
-    ol.meds.rp li { margin-bottom: 4px; }
-    .ind { margin: 1px 0 0; font-size: 8.5pt; font-style: italic; color: #333; }
-    .generales-tit { font-size: 9.5pt; font-weight: bold; margin: 6px 0 5px; }
-    .generales p { margin: 0 0 2px; font-size: 9pt; }
-    .pie { margin-top: auto; padding-top: 20px; }
-    .firma { margin: 0; font-size: 9.5pt; font-weight: bold; color: #1d4ed8; }
-    .sede { margin: 2px 0 0; font-size: 8.5pt; color: #444; }
+    .mitad:first-child { border-right: 1px dashed #c7d2e5; }
+    .cab { display: flex; align-items: center; gap: 8px; }
+    .cab .logo { width: 34px; height: 34px; flex-shrink: 0; }
+    .cab .equilibrio { width: 34px; flex-shrink: 0; }
+    .doc { flex: 1; text-align: center; }
+    h1 { font-size: 11pt; margin: 0; color: #1d4ed8; }
+    .esp { margin: 1px 0 0; font-size: 8.5pt; color: #2563eb; font-weight: bold; }
+    .cred { margin: 1px 0 0; font-size: 7pt; color: #444; }
+    .regla { border-top: 2px solid #2563eb; margin: 7px 0; }
+    .datos { font-size: 7.5pt; margin: 0 0 10px; }
+    .titulo {
+      font-size: 9.5pt; font-weight: bold; color: #2563eb; margin: 0 0 8px;
+      background: #eff6ff; border-left: 3px solid #2563eb; padding: 4px 9px;
+    }
+    ol.meds { margin: 0; padding-left: 18px; }
+    ol.meds li { margin-bottom: 7px; font-size: 9pt; }
+    .ind { margin: 1px 0 0; font-size: 7.5pt; font-style: italic; color: #333; }
+    .generales-tit { font-size: 8.5pt; font-weight: bold; margin: 12px 0 4px; }
+    .generales p { margin: 0 0 2px; font-size: 8pt; }
+    .pie { margin-top: auto; padding-top: 14px; }
+    .firma { margin: 0; font-size: 8.5pt; font-weight: bold; color: #1d4ed8; }
+    .sede { margin: 1px 0 0; font-size: 7.5pt; color: #444; }
     @media print { body { margin: 0; } }
   </style></head><body>
-  ${hoja}
+  <div class="hoja">
+    ${mitadRp}
+    ${mitadInd}
+  </div>
   <script>window.onload=()=>window.print()<\/script></body></html>`
 
   const w = window.open('', '_blank')
