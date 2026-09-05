@@ -25,9 +25,11 @@ function imprimirRecipe(recipe, paciente) {
   const meds = Array.isArray(recipe.medicamentos) ? recipe.medicamentos : []
   const generales = (recipe.indicaciones_generales || '').split('\n').filter(l => l.trim())
 
+  // Se escriben igual que en su sello: CI: V-24.304.725 · MPPS: 134.225 · CM: 13926
+  const miles = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
   const credenciales = [
-    med.cedula ? `V: ${med.cedula}` : '',
-    med.mpps ? `MPPS: ${med.mpps}` : '',
+    med.cedula ? `CI: V-${miles(med.cedula)}` : '',
+    med.mpps ? `MPPS: ${miles(med.mpps)}` : '',
     med.cm ? `CM: ${med.cm}` : '',
   ].filter(Boolean).join(' &nbsp; ')
 
@@ -52,10 +54,16 @@ function imprimirRecipe(recipe, paciente) {
     <div class="regla"></div>
     <p class="datos">${datosPaciente}</p>`
 
+  // El sello escaneado ya trae su firma, nombre, especialidad y credenciales.
+  // Si no hay sello configurado, se imprime el nombre y queda el espacio para firmar a mano.
+  const sello = med.sello ? `${window.location.origin}${med.sello}` : ''
+
   const pie = `
     <div class="pie">
+      ${sello
+        ? `<img class="sello" src="${sello}" alt="">`
+        : `<div class="espacio-firma"></div><p class="firma">${med.nombre}</p>`}
       <div class="regla"></div>
-      <p class="firma">${med.nombre}</p>
       <p class="sede">${sede ? `${sede.nombre}${sede.direccion ? ', ' + sede.direccion : ''}` : ''}</p>
     </div>`
 
@@ -118,9 +126,11 @@ function imprimirRecipe(recipe, paciente) {
     .ind { margin: 1px 0 0; font-size: 7.5pt; font-style: italic; color: #333; }
     .generales-tit { font-size: 8.5pt; font-weight: bold; margin: 12px 0 4px; }
     .generales p { margin: 0 0 2px; font-size: 8pt; }
-    .pie { margin-top: auto; padding-top: 14px; }
-    .firma { margin: 0; font-size: 8.5pt; font-weight: bold; color: #1d4ed8; }
-    .sede { margin: 1px 0 0; font-size: 7.5pt; color: #444; }
+    .pie { margin-top: auto; padding-top: 10px; }
+    .sello { display: block; width: 40mm; height: auto; margin: 0 0 2px; }
+    .espacio-firma { height: 16mm; }
+    .firma { margin: 0 0 2px; font-size: 8.5pt; font-weight: bold; color: #1d4ed8; }
+    .sede { margin: 3px 0 0; font-size: 7.5pt; color: #444; }
     @media print { body { margin: 0; } }
   </style></head><body>
   <div class="hoja">

@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════
 //  CONFIGURACIÓN DEL NEGOCIO — único archivo de código a editar
-//  Cliente: Dra. Omaira Frontado Salcedo · Medicina Interna
+//  Cliente: Dra. Omaira Frontado S. · Medicina Interna
 // ═══════════════════════════════════════════════════════════════════
 
 export const NEGOCIO = {
@@ -10,7 +10,7 @@ export const NEGOCIO = {
 
   // ── Dueña del negocio ──
   nombreCorto: 'Dra. Omaira',                       // saludo del dashboard
-  nombreCompleto: 'Dra. Omaira Frontado Salcedo',   // reportes PDF y WhatsApp
+  nombreCompleto: 'Dra. Omaira Frontado S.',        // reportes PDF y WhatsApp
   saludo: 'Bienvenida',
   descripcionProfesional: 'internista',
 
@@ -41,14 +41,17 @@ export const NEGOCIO = {
   },
 
   // ── Datos que encabezan el récipe médico ──
-  // IMPORTANTE: verificar con la doctora antes de usarlo con pacientes reales.
+  // Nombre y credenciales tomados de su sello oficial.
   medico: {
-    nombre: 'Dra. Omaira D. V. Frontado Salcedo',
+    nombre: 'Dra. Omaira Frontado S.',
     especialidad: 'Medicina Interna',
     cedula: '24304725',
     mpps: '134225',
     cm: '13926',
     correo: '',
+    // Firma y sello escaneados: se estampan al pie del récipe.
+    // Dejar en '' si prefiere firmar cada hoja a mano.
+    sello: '/sello.png',
   },
 
   // ── Sedes donde atiende (aparecen al pie del récipe) ──
