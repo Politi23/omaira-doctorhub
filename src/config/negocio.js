@@ -41,10 +41,11 @@ export const NEGOCIO = {
   },
 
   // ── Dominio que se imprime en el QR de verificación ──
-  // El papel dura años: el QR debe apuntar SIEMPRE al dominio definitivo,
+  // El papel dura años: el QR debe apuntar SIEMPRE al mismo dominio,
   // aunque se imprima desde otra URL. Vacío = usa el dominio actual.
-  // Poner aquí el dominio final ANTES de que empiece a entregar récipes.
-  urlPublica: '',
+  // Si más adelante se le pone dominio propio, este de Vercel debe seguir
+  // existiendo: los récipes ya impresos apuntan aquí para siempre.
+  urlPublica: 'https://omaira-doctorhub.vercel.app',
 
   // ── Datos que encabezan el récipe médico ──
   // Nombre y credenciales tomados de su sello oficial.
