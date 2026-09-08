@@ -30,7 +30,7 @@ const ESTADO_CFG = {
 export default function DetallePaciente() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { pacientes, ingresos, citas, eliminarPaciente, eliminarIngreso } = useApp()
+  const { pacientes, ingresos, citas, eliminarPaciente, eliminarIngreso, modulosListos } = useApp()
   const [confirmar, setConfirmar] = useState(false)
   const [confirmarIngreso, setConfirmarIngreso] = useState(null)
   const [eliminando, setEliminando] = useState(false)
@@ -194,7 +194,7 @@ export default function DetallePaciente() {
         </div>
 
         {/* Récipes médicos */}
-        {NEGOCIO.modulos?.recipes && (
+        {NEGOCIO.modulos?.recipes && modulosListos.recipes && (
           <button onClick={() => navigate(`/pacientes/${id}/recipes`)}
                   className="glass-card w-full flex items-center gap-3 text-left active:bg-white/10 transition-colors"
                   style={{background:'rgba(236,72,153,0.12)', border:'1px solid rgba(236,72,153,0.30)'}}>
@@ -211,7 +211,7 @@ export default function DetallePaciente() {
         )}
 
         {/* Informes médicos */}
-        {NEGOCIO.modulos?.informes && (
+        {NEGOCIO.modulos?.informes && modulosListos.informes && (
           <button onClick={() => navigate(`/pacientes/${id}/informes`)}
                   className="glass-card w-full flex items-center gap-3 text-left active:bg-white/10 transition-colors"
                   style={{background:'rgba(37,99,235,0.12)', border:'1px solid rgba(37,99,235,0.30)'}}>

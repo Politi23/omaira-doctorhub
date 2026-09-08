@@ -3,6 +3,12 @@ import { supabase } from '../lib/supabase'
 
 const AppContext = createContext()
 
+// PostgREST avisa con PGRST205 (o 42P01) cuando la tabla no existe todavía.
+// Se distingue de un error real de conexión o de permisos, que sí debe fallar.
+const faltaLaTabla = (error) =>
+  !!error && (error.code === 'PGRST205' || error.code === '42P01' ||
+              /Could not find the table/i.test(error.message || ''))
+
 export function AppProvider({ children }) {
   const [pacientes, setPacientes] = useState([])
   const [ingresos,  setIngresos]  = useState([])
@@ -10,6 +16,8 @@ export function AppProvider({ children }) {
   const [egresos,   setEgresos]   = useState([])
   const [recipes,   setRecipes]   = useState([])
   const [informes,  setInformes]  = useState([])
+  // Módulos opcionales cuya tabla todavía no está creada en la base.
+  const [modulosListos, setModulosListos] = useState({ recipes: true, informes: true })
   const [loading,   setLoading]   = useState(true)
   const [error,     setError]     = useState(null)
 
@@ -40,8 +48,16 @@ export function AppProvider({ children }) {
         if (resIngresos.error)  throw resIngresos.error
         if (resCitas.error)     throw resCitas.error
         if (resEgresos.error)   throw resEgresos.error
-        if (resRecipes.error)   throw resRecipes.error
-        if (resInformes.error)  throw resInformes.error
+        // Un módulo opcional cuya tabla aún no existe NO debe tumbar la app:
+        // se carga vacío y su entrada queda oculta hasta que se corra su SQL.
+        // Cualquier otro error sí se reporta, para no esconder fallas reales.
+        if (resRecipes.error  && !faltaLaTabla(resRecipes.error))  throw resRecipes.error
+        if (resInformes.error && !faltaLaTabla(resInformes.error)) throw resInformes.error
+
+        const sinRecipes  = faltaLaTabla(resRecipes.error)
+        const sinInformes = faltaLaTabla(resInformes.error)
+        if (sinRecipes)  console.warn('[DoctorHub] Falta la tabla "recipes": el módulo de récipes queda oculto hasta correr su SQL.')
+        if (sinInformes) console.warn('[DoctorHub] Falta la tabla "informes": el módulo de informes queda oculto hasta correr su SQL.')
 
         setPacientes(resPacientes.data || [])
         setIngresos(resIngresos.data   || [])
@@ -49,6 +65,7 @@ export function AppProvider({ children }) {
         setEgresos(resEgresos.data     || [])
         setRecipes(resRecipes.data     || [])
         setInformes(resInformes.data   || [])
+        setModulosListos({ recipes: !sinRecipes, informes: !sinInformes })
       } catch (err) {
         if (!cancelled) {
           console.error('[Supabase] Error al cargar datos:', err.message)
@@ -268,7 +285,7 @@ export function AppProvider({ children }) {
 
   return (
     <AppContext.Provider value={{
-      pacientes, ingresos, citas, egresos, recipes, informes,
+      pacientes, ingresos, citas, egresos, recipes, informes, modulosListos,
       loading, error,
       agregarPaciente, actualizarPaciente, eliminarPaciente,
       agregarIngreso, actualizarIngreso, eliminarIngreso,
