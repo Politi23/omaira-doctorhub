@@ -53,7 +53,17 @@ export default function VerificarDocumento() {
   const d = doc?.datos || {}
   const meds = Array.isArray(d.medicamentos) ? d.medicamentos : []
   const generales = (d.indicaciones_generales || '').split('\n').filter(l => l.trim())
-  const diagnosticos = (d.diagnostico || '').split('\n').filter(l => l.trim())
+  // Se publica el informe completo: es lo que permite comparar contra el
+  // papel y detectar una alteración. Solo la cédula va enmascarada.
+  const secciones = [
+    { titulo: 'Motivo y cuadro actual', texto: d.relato },
+    { titulo: 'Antecedentes',           texto: d.antecedentes },
+    { titulo: 'Funciones biológicas',   texto: d.funciones_biologicas },
+    { titulo: 'Examen físico',          texto: d.examen_fisico },
+    { titulo: 'Diagnóstico',            texto: d.diagnostico, listado: true },
+    { titulo: 'Tratamiento',            texto: d.tratamiento },
+    { titulo: 'Plan de trabajo',        texto: d.plan_trabajo },
+  ].filter(x => x.texto && String(x.texto).trim())
 
   return (
     <div className="min-h-screen px-5 py-8 flex flex-col items-center">
@@ -164,21 +174,30 @@ export default function VerificarDocumento() {
 
             {/* Contenido verificable */}
             {esInforme ? (
-              diagnosticos.length > 0 && (
-                <div className="glass-card space-y-3">
-                  <div className="flex items-center gap-2 text-white/35 text-xs uppercase tracking-wide">
-                    <FileText size={13} /> Diagnóstico
-                  </div>
-                  <ul className="space-y-1.5">
-                    {diagnosticos.map((l, i) => (
-                      <li key={i} className="flex gap-2.5">
-                        <span className="text-pink-300/70 font-bold text-sm shrink-0">{i + 1}.</span>
-                        <span className="text-white text-sm">{l}</span>
-                      </li>
-                    ))}
-                  </ul>
+              <div className="glass-card space-y-4">
+                <div className="flex items-center gap-2 text-white/35 text-xs uppercase tracking-wide">
+                  <FileText size={13} /> Contenido del informe
                 </div>
-              )
+                {secciones.map((sec, i) => (
+                  <div key={i} className="space-y-1">
+                    <p className="text-pink-300/70 text-xs font-semibold uppercase tracking-wide">{sec.titulo}</p>
+                    {sec.listado ? (
+                      <ul className="space-y-1">
+                        {String(sec.texto).split('\n').filter(l => l.trim()).map((l, j) => (
+                          <li key={j} className="flex gap-2">
+                            <span className="text-white/30 text-sm shrink-0">{j + 1}.</span>
+                            <span className="text-white text-sm uppercase">{l}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      String(sec.texto).split('\n').filter(l => l.trim()).map((l, j) => (
+                        <p key={j} className="text-white/75 text-sm leading-relaxed">{l}</p>
+                      ))
+                    )}
+                  </div>
+                ))}
+              </div>
             ) : (
               <div className="glass-card space-y-3">
                 <div className="flex items-center gap-2 text-white/35 text-xs uppercase tracking-wide">
@@ -208,8 +227,8 @@ export default function VerificarDocumento() {
 
             <p className="text-white/25 text-[11px] text-center leading-relaxed px-4">
               La cédula se muestra parcialmente por privacidad del paciente.
-              {esInforme && ' Del informe solo se publica el diagnóstico.'}
-              {' '}Esta página solo confirma la autenticidad del documento.
+              El resto del documento se muestra completo para que puedas compararlo
+              con el papel: así se detecta si fue alterado.
             </p>
           </div>
         )}
