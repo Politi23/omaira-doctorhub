@@ -16,6 +16,7 @@ const NuevoEgreso     = lazy(() => import('./pages/NuevoEgreso'))
 const Estadisticas    = lazy(() => import('./pages/Estadisticas'))
 const Seguimiento     = lazy(() => import('./pages/Seguimiento'))
 const Recipes         = lazy(() => import('./pages/Recipes'))
+const Informes        = lazy(() => import('./pages/Informes'))
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="pacientes/:id" element={<DetallePaciente />} />
             <Route path="pacientes/:id/editar" element={<NuevaPaciente />} />
             <Route path="pacientes/:id/recipes" element={<Recipes />} />
+            <Route path="pacientes/:id/informes" element={<Informes />} />
             <Route path="ingresos" element={<Ingresos />} />
             <Route path="ingresos/nuevo" element={<NuevoIngreso />} />
             <Route path="ingresos/:id/editar" element={<NuevoIngreso />} />

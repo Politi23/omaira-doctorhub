@@ -5,7 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
 import App from './App'
 import Login from './pages/Login'
-import VerificarRecipe from './pages/VerificarRecipe'
+import VerificarDocumento from './pages/VerificarDocumento'
 import LoadingScreen from './components/LoadingScreen'
 import './index.css'
 
@@ -26,7 +26,7 @@ function Root() {
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     {esVerificacion ? (
-      <VerificarRecipe />
+      <VerificarDocumento />
     ) : (
       <AuthProvider>
         <AppProvider>

@@ -9,6 +9,7 @@ export function AppProvider({ children }) {
   const [citas,     setCitas]     = useState([])
   const [egresos,   setEgresos]   = useState([])
   const [recipes,   setRecipes]   = useState([])
+  const [informes,  setInformes]  = useState([])
   const [loading,   setLoading]   = useState(true)
   const [error,     setError]     = useState(null)
 
@@ -24,12 +25,13 @@ export function AppProvider({ children }) {
         return
       }
       try {
-        const [resPacientes, resIngresos, resCitas, resEgresos, resRecipes] = await Promise.all([
+        const [resPacientes, resIngresos, resCitas, resEgresos, resRecipes, resInformes] = await Promise.all([
           supabase.from('pacientes').select('*').order('created_at', { ascending: false }).limit(5000),
           supabase.from('ingresos').select('*').order('created_at',  { ascending: false }).limit(5000),
           supabase.from('citas').select('*').order('created_at',     { ascending: false }).limit(5000),
           supabase.from('egresos').select('*').order('created_at',   { ascending: false }).limit(5000),
           supabase.from('recipes').select('*').order('created_at',   { ascending: false }).limit(5000),
+          supabase.from('informes').select('*').order('created_at',  { ascending: false }).limit(5000),
         ])
 
         if (cancelled) return
@@ -39,12 +41,14 @@ export function AppProvider({ children }) {
         if (resCitas.error)     throw resCitas.error
         if (resEgresos.error)   throw resEgresos.error
         if (resRecipes.error)   throw resRecipes.error
+        if (resInformes.error)  throw resInformes.error
 
         setPacientes(resPacientes.data || [])
         setIngresos(resIngresos.data   || [])
         setCitas(resCitas.data         || [])
         setEgresos(resEgresos.data     || [])
         setRecipes(resRecipes.data     || [])
+        setInformes(resInformes.data   || [])
       } catch (err) {
         if (!cancelled) {
           console.error('[Supabase] Error al cargar datos:', err.message)
@@ -111,6 +115,7 @@ export function AppProvider({ children }) {
     setIngresos(prev  => prev.filter(i => i.paciente_id !== id))
     setCitas(prev     => prev.filter(c => c.paciente_id !== id))
     setRecipes(prev   => prev.filter(r => r.paciente_id !== id))
+    setInformes(prev  => prev.filter(r => r.paciente_id !== id))
   }
 
   // ── Ingresos ───────────────────────────────────────────────
@@ -221,6 +226,26 @@ export function AppProvider({ children }) {
     return data
   }
 
+  const agregarInforme = async (datos) => {
+    const { data, error } = await supabase
+      .from('informes')
+      .insert(datos)
+      .select()
+      .single()
+    if (error) throw error
+    setInformes(prev => [data, ...prev])
+    return data
+  }
+
+  const eliminarInforme = async (id) => {
+    const { error } = await supabase
+      .from('informes')
+      .delete()
+      .eq('id', id)
+    if (error) throw error
+    setInformes(prev => prev.filter(r => r.id !== id))
+  }
+
   const actualizarRecipe = async (id, datos) => {
     const { data, error } = await supabase
       .from('recipes')
@@ -243,13 +268,14 @@ export function AppProvider({ children }) {
 
   return (
     <AppContext.Provider value={{
-      pacientes, ingresos, citas, egresos, recipes,
+      pacientes, ingresos, citas, egresos, recipes, informes,
       loading, error,
       agregarPaciente, actualizarPaciente, eliminarPaciente,
       agregarIngreso, actualizarIngreso, eliminarIngreso,
       agregarCita, actualizarCita, eliminarCita,
       agregarEgreso, actualizarEgreso, eliminarEgreso,
       agregarRecipe, actualizarRecipe, eliminarRecipe,
+      agregarInforme, eliminarInforme,
     }}>
       {children}
     </AppContext.Provider>

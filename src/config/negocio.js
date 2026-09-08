@@ -15,6 +15,7 @@ export const NEGOCIO = {
   descripcionProfesional: 'internista',
 
   // ── Lugar de trabajo (egresos, mensajes) ──
+  ciudad: 'Puerto Cabello',   // encabeza la fecha del informe médico
   lugar: 'consultorio',
   Lugar: 'Consultorio',
   emojiLugar: '🏥',
@@ -38,6 +39,7 @@ export const NEGOCIO = {
   // ── Módulos activos ──
   modulos: {
     recipes: true,   // récipes digitales con indicaciones, exportables en PDF
+    informes: true,  // informes médicos en hoja con membrete
   },
 
   // ── Dominio que se imprime en el QR de verificación ──

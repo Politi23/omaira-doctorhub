@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
-import { Edit2, Trash2, DollarSign, Plus, Phone, Calendar, Clock, Copy, Check, MessageCircle, CalendarPlus, Pill, ChevronRight } from 'lucide-react'
+import { Edit2, Trash2, DollarSign, Plus, Phone, Calendar, Clock, Copy, Check, MessageCircle, CalendarPlus, Pill, FileText, ChevronRight } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import { NEGOCIO } from '../config/negocio'
 import { hoyVE } from '../lib/fecha'
@@ -205,6 +205,23 @@ export default function DetallePaciente() {
             <div className="flex-1 min-w-0">
               <p className="text-white font-semibold text-sm">Récipes</p>
               <p className="text-white/45 text-xs">Emitir e imprimir récipes médicos</p>
+            </div>
+            <ChevronRight size={17} className="text-white/25 flex-shrink-0" />
+          </button>
+        )}
+
+        {/* Informes médicos */}
+        {NEGOCIO.modulos?.informes && (
+          <button onClick={() => navigate(`/pacientes/${id}/informes`)}
+                  className="glass-card w-full flex items-center gap-3 text-left active:bg-white/10 transition-colors"
+                  style={{background:'rgba(37,99,235,0.12)', border:'1px solid rgba(37,99,235,0.30)'}}>
+            <div className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0"
+                 style={{background:'rgba(37,99,235,0.20)', border:'1px solid rgba(37,99,235,0.35)'}}>
+              <FileText size={19} className="text-blue-300" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white font-semibold text-sm">Informes médicos</p>
+              <p className="text-white/45 text-xs">Redactar e imprimir informes con membrete</p>
             </div>
             <ChevronRight size={17} className="text-white/25 flex-shrink-0" />
           </button>

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { NEGOCIO } from '../config/negocio'
-import { ShieldCheck, ShieldAlert, Search, Loader2, Pill, Stethoscope } from 'lucide-react'
+import { ShieldCheck, ShieldAlert, Search, Loader2, Pill, FileText, Stethoscope } from 'lucide-react'
 
-// ── Página pública: cualquiera puede comprobar aquí que un récipe es real ──
-// Vive fuera del login. Solo responde si le dan el código exacto impreso en el
-// récipe; no permite listar ni buscar récipes de ninguna otra forma.
+// ── Página pública: comprueba que un récipe o un informe es real ──
+// Vive fuera del login. Solo responde al código exacto impreso en el papel;
+// no permite listar ni buscar documentos de ninguna otra forma.
 
 function formatFecha(iso) {
   if (!iso) return ''
@@ -19,27 +19,41 @@ function codigoDeLaUrl() {
   return i >= 0 && partes[i + 1] ? partes[i + 1].toLowerCase() : ''
 }
 
-export default function VerificarRecipe() {
+// Consulta la función que cubre los dos tipos de documento. Si la base
+// todavía no la tiene, cae en la de récipes para no quedarse sin verificar.
+async function consultar(codigo) {
+  const { data, error } = await supabase.rpc('verificar_documento', { p_codigo: codigo })
+  if (!error) return { fila: data && data[0] ? data[0] : null }
+  const alterno = await supabase.rpc('verificar_recipe', { p_codigo: codigo })
+  if (alterno.error) return { error: true }
+  const r = alterno.data && alterno.data[0]
+  return { fila: r ? { tipo: 'recipe', datos: r } : null }
+}
+
+export default function VerificarDocumento() {
   const med = NEGOCIO.medico || {}
   const [codigo, setCodigo] = useState(codigoDeLaUrl())
   const [estado, setEstado] = useState(codigoDeLaUrl() ? 'buscando' : 'vacio')
-  const [recipe, setRecipe] = useState(null)
+  const [doc, setDoc] = useState(null)
 
   const buscar = async (cod) => {
     const limpio = (cod || '').trim().toLowerCase()
-    if (!limpio) { setEstado('vacio'); setRecipe(null); return }
+    if (!limpio) { setEstado('vacio'); setDoc(null); return }
     setEstado('buscando')
-    const { data, error } = await supabase.rpc('verificar_recipe', { p_codigo: limpio })
-    if (error) { setEstado('error'); setRecipe(null); return }
-    if (!data || !data.length) { setEstado('no-existe'); setRecipe(null); return }
-    setRecipe(data[0])
+    const { fila, error } = await consultar(limpio)
+    if (error) { setEstado('error'); setDoc(null); return }
+    if (!fila) { setEstado('no-existe'); setDoc(null); return }
+    setDoc(fila)
     setEstado('valido')
   }
 
   useEffect(() => { if (codigoDeLaUrl()) buscar(codigoDeLaUrl()) }, [])
 
-  const meds = Array.isArray(recipe?.medicamentos) ? recipe.medicamentos : []
-  const generales = (recipe?.indicaciones_generales || '').split('\n').filter(l => l.trim())
+  const esInforme = doc?.tipo === 'informe'
+  const d = doc?.datos || {}
+  const meds = Array.isArray(d.medicamentos) ? d.medicamentos : []
+  const generales = (d.indicaciones_generales || '').split('\n').filter(l => l.trim())
+  const diagnosticos = (d.diagnostico || '').split('\n').filter(l => l.trim())
 
   return (
     <div className="min-h-screen px-5 py-8 flex flex-col items-center">
@@ -54,9 +68,9 @@ export default function VerificarRecipe() {
         {/* Encabezado */}
         <div className="text-center space-y-1">
           <img src="/logo-login.png" alt="" className="w-16 h-16 mx-auto object-contain" />
-          <h1 className="text-white text-lg font-bold">Verificación de récipe</h1>
+          <h1 className="text-white text-lg font-bold">Verificación de documentos</h1>
           <p className="text-white/40 text-xs">
-            Confirma que un récipe fue emitido por {med.nombre || NEGOCIO.nombreCompleto}
+            Confirma que un récipe o informe fue emitido por {med.nombre || NEGOCIO.nombreCompleto}
           </p>
         </div>
 
@@ -90,10 +104,10 @@ export default function VerificarRecipe() {
         {estado === 'no-existe' && (
           <div className="glass-card space-y-2 border border-red-400/25">
             <div className="flex items-center gap-2 text-red-300 font-bold">
-              <ShieldAlert size={20} /> No se encontró este récipe
+              <ShieldAlert size={20} /> No se encontró este documento
             </div>
             <p className="text-white/50 text-sm leading-relaxed">
-              Ningún récipe emitido por este consultorio tiene el código
+              Ningún récipe ni informe emitido por este consultorio tiene el código
               <span className="font-mono text-white/70"> {codigo}</span>. Revisa que lo hayas
               escrito igual que en el papel. Si el código está bien y aun así no aparece,
               el documento no fue emitido aquí.
@@ -107,12 +121,13 @@ export default function VerificarRecipe() {
           </div>
         )}
 
-        {estado === 'valido' && recipe && (
+        {estado === 'valido' && doc && (
           <div className="space-y-4">
 
             <div className="glass-card space-y-1 border border-emerald-400/30">
               <div className="flex items-center gap-2 text-emerald-300 font-bold">
-                <ShieldCheck size={20} /> Récipe auténtico
+                <ShieldCheck size={20} />
+                {esInforme ? 'Informe auténtico' : 'Récipe auténtico'}
               </div>
               <p className="text-white/50 text-sm">
                 Emitido por este consultorio. Compara los datos de abajo con el papel que tienes
@@ -133,48 +148,68 @@ export default function VerificarRecipe() {
               </p>
             </div>
 
-            {/* Datos del récipe */}
+            {/* Datos del documento */}
             <div className="glass-card space-y-3">
+              <Dato etiqueta="Tipo de documento" valor={esInforme ? 'Informe médico' : 'Récipe médico'} />
               <Dato etiqueta="Código validador"
-                    valor={<span className="font-mono tracking-widest">{recipe.codigo}</span>} />
-              <Dato etiqueta="Fecha del récipe" valor={formatFecha(recipe.fecha)} />
-              {recipe.sede && <Dato etiqueta="Sede" valor={recipe.sede} />}
-              <Dato etiqueta="Paciente" valor={recipe.paciente_nombre} />
-              {recipe.paciente_cedula && (
-                <Dato etiqueta="Cédula"
-                      valor={<span className="font-mono">{recipe.paciente_cedula}</span>} />
+                    valor={<span className="font-mono tracking-widest">{d.codigo}</span>} />
+              <Dato etiqueta="Fecha" valor={formatFecha(d.fecha)} />
+              {d.sede && <Dato etiqueta="Sede" valor={d.sede} />}
+              <Dato etiqueta="Paciente" valor={d.paciente_nombre} />
+              {d.edad && <Dato etiqueta="Edad" valor={d.edad} />}
+              {d.paciente_cedula && (
+                <Dato etiqueta="Cédula" valor={<span className="font-mono">{d.paciente_cedula}</span>} />
               )}
             </div>
 
-            {/* Medicamentos */}
-            <div className="glass-card space-y-3">
-              <div className="flex items-center gap-2 text-white/35 text-xs uppercase tracking-wide">
-                <Pill size={13} /> Medicamentos indicados
-              </div>
-              <ol className="space-y-2.5">
-                {meds.map((m, i) => (
-                  <li key={i} className="flex gap-2.5">
-                    <span className="text-pink-300/70 font-bold text-sm shrink-0">{i + 1}.</span>
-                    <div className="min-w-0">
-                      <p className="text-white text-sm font-semibold">{m.nombre}</p>
-                      {m.indicaciones && (
-                        <p className="text-white/45 text-xs mt-0.5">{m.indicaciones}</p>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ol>
-              {generales.length > 0 && (
-                <div className="pt-2 border-t border-white/10 space-y-1">
-                  <p className="text-white/35 text-xs uppercase tracking-wide">Indicaciones generales</p>
-                  {generales.map((l, i) => <p key={i} className="text-white/55 text-xs">{l}</p>)}
+            {/* Contenido verificable */}
+            {esInforme ? (
+              diagnosticos.length > 0 && (
+                <div className="glass-card space-y-3">
+                  <div className="flex items-center gap-2 text-white/35 text-xs uppercase tracking-wide">
+                    <FileText size={13} /> Diagnóstico
+                  </div>
+                  <ul className="space-y-1.5">
+                    {diagnosticos.map((l, i) => (
+                      <li key={i} className="flex gap-2.5">
+                        <span className="text-pink-300/70 font-bold text-sm shrink-0">{i + 1}.</span>
+                        <span className="text-white text-sm">{l}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              )}
-            </div>
+              )
+            ) : (
+              <div className="glass-card space-y-3">
+                <div className="flex items-center gap-2 text-white/35 text-xs uppercase tracking-wide">
+                  <Pill size={13} /> Medicamentos indicados
+                </div>
+                <ol className="space-y-2.5">
+                  {meds.map((m, i) => (
+                    <li key={i} className="flex gap-2.5">
+                      <span className="text-pink-300/70 font-bold text-sm shrink-0">{i + 1}.</span>
+                      <div className="min-w-0">
+                        <p className="text-white text-sm font-semibold">{m.nombre}</p>
+                        {m.indicaciones && (
+                          <p className="text-white/45 text-xs mt-0.5">{m.indicaciones}</p>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+                {generales.length > 0 && (
+                  <div className="pt-2 border-t border-white/10 space-y-1">
+                    <p className="text-white/35 text-xs uppercase tracking-wide">Indicaciones generales</p>
+                    {generales.map((l, i) => <p key={i} className="text-white/55 text-xs">{l}</p>)}
+                  </div>
+                )}
+              </div>
+            )}
 
             <p className="text-white/25 text-[11px] text-center leading-relaxed px-4">
               La cédula se muestra parcialmente por privacidad del paciente.
-              Esta página solo confirma la autenticidad del documento.
+              {esInforme && ' Del informe solo se publica el diagnóstico.'}
+              {' '}Esta página solo confirma la autenticidad del documento.
             </p>
           </div>
         )}
